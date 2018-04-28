@@ -48,31 +48,48 @@ class Calculator
                 when Is_numeric
                     puts "num"
                     output_queue.push(cell)
-                when Function_calculator, "("
+                when Function_calculator
+                when "("
                     puts "funct or ("
                     operator_stack.push(cell)
                 when Operator_calculator
                     puts "Operator"
+                    unless operator_stack.last.nil?
+                        while(accepted_functions.include? operator_stack.last or getInfoFromHash(operator_stack.last, "precedence")>getInfoFromHash(cell, "precedence") or (getInfoFromHash(operator_stack.last, "precedence")==getInfoFromHash(cell, "precedence") and getInfoFromHash(operator_stack.last, "associativity")>getInfoFromHash(cell, "associativity"))){
+                            output_queue.push(operator_stack.pop)
+                        }
+                    end
+                    """
                     operator_stack.each_with_index { |operator, index|
                         puts "in each operate stack"
                         puts operator, index
                         operator_stack[index] = ""
-                        break if ((accepted_functions.include? operator or getInfoFromHash(operator, "precedence")>getInfoFromHash(cell, "precedence") or (getInfoFromHash(operator, "precedence")==getInfoFromHash(cell, "precedence") and getInfoFromHash(operator, "associativity")>getInfoFromHash(cell, "associativity"))) and operator != "(")
+                        break if (accepted_functions.include? operator or getInfoFromHash(operator, "precedence")>getInfoFromHash(cell, "precedence") or (getInfoFromHash(operator, "precedence")==getInfoFromHash(cell, "precedence") and getInfoFromHash(operator, "associativity")>getInfoFromHash(cell, "associativity")))
                         output_queue.push(operator)
                     }
+                    """
                     operator_stack.push(cell)
                 when ")"
                     puts ")"
+                    unless operator_stack.last.nil?
+                        while(operator_stack.last != "("){
+                            output_queue.push(operator_stack.pop)
+                        }
+                        if(operator_stack.last == "("){
+                            operator_stack.pop
+                        }
+                    end
+                    """
                     operator_stack.each { |operator, index|
                         operator_stack[index] = ""
                         break if operator == "("
                         output_queue.push(operator)
                     }
                     operator_stack.reject(&:empty?)
+                    """
             end
         }
-        operator_stack.each { |operator| output_queue.push(operator) }
-        operator_stack = []
+        while(operator_stack.any?) {output_queue.push(operator_stack.pop)}
         return output_queue
     end
     def printExpression
