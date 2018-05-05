@@ -1,0 +1,18 @@
+<h1>CALCULATOR :)</h1>
+<%= form_for :calculator, url: { action: :operate }, method: :get do |f|   %>
+  <%= text_field_tag :input, params[:input] %>
+  <%= f.submit 'Calculate!' %>
+<% end %>
+
+<% unless @input.nil? %>
+  <p> Input: <%= @input %> </p>
+<% end %>
+<% unless @stackInput.nil? %>
+  <p> Stack of input: <%= @stackInput %> </p>
+<% end %>
+<% unless @shunting_yard.nil? %>
+  <p> shunting_yard: <%= @shunting_yard %> </p>
+<% end %>
+<% unless @polish_notation_algorithm.nil? %>
+  <p> Result: <%= @polish_notation_algorithm %> </p>
+<% end %>
