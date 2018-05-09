@@ -59,8 +59,8 @@ class Calculator
             Takes any String given from controller method calculator#index as input.
 
             Returns expression which is a stack of elements where elements could be Functions, operators, numbers.
-            Note that .gsub(",",".") replaces every ',' given in input with a '.' so function .to_f can read Float. ('2,5'.to_f would return 2).
-            Note that if expression starts with a '-' sign, we appen a 0 to the first cell. Example: -4+3*2 -> 0-4+3*2.
+            Note that .gsub(',','.') replaces every ',' given in input with a '.' so function .to_f can read Float. ('2,5'.to_f would return 2).
+            Note that if expression starts with a '-' sign, a 0 is appended to the first cell. Example: -4+3*2 -> 0-4+3*2.
             Note that .reject(&:empty?) drops any cell with empty string inside stack.
             Note that .map{|x| x[/#{@@pi}/] ? Math::PI.to_s : x } takes any accepted PI statement and replaces it by pi numeric value as a String.
         """
