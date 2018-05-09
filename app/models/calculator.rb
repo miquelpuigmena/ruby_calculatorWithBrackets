@@ -13,27 +13,51 @@ class Calculator
     @@numeric="\d*[\.|\,]?\d+"
     @@blank_spaces="\s+"
     class Is_function < Calculator
+        =begin
+            Checks wether str input is a function. Number could be ["log","ln",...,"cosh",...,"tan"]
+            Return true if it is a function false otherwise.
+        =end
         def self.===(str)
             str[/[#{@@functions}]/] != nil
         end
     end
     class Is_operator < Calculator
+        =begin
+            Checks wether str input is an operand. Operator could be ["+", "-", "/", "*", "^"]
+            Return true if it is an operand false otherwise.
+        =end
         def self.===(str)
             str[/[#{@@operands}]/] != nil
         end
     end
     class Is_numeric < Calculator
+        =begin
+            Checks wether str input is a number. Number could be ["1", "1.4", "1,5", ".578", ",99"]
+            Return true if it is a number false otherwise.
+        =end
         def self.===(str)
             str[/\d*[\.|\,]?\d+/] != nil
         end
     end
     public
     def self.makeStackfromInput(input)
+        =begin
+            Takes any String given from controller method calculator#index as input.
+            Returns expression which is a stack of elements where elements could be Functions, operators, numbers.
+            Note that .reject(&:empty?) drops any cell with empty string inside stack.
+            Note that .map{|x| x[/#{@@pi}/] ? Math::PI.to_s : x } takes any accepted PI statement and replaces it by pi numeric value as a String.
+        =end
         #expression = input.split(%r{\s+|(\d*\.\d+)|([\+\-\*\/\^\(\)])|(log|ln|exp|e\^|sinh|cosh|tanh|sin|cos|tan)}).reject(&:empty?)
         expression = input.split(/#{@@blank_spaces}|([#{@@numeric}])|(#{@@pi})|([#{@@operands}])|([#{@@parenthesis}])|(#{@@functions})/).reject(&:empty?).map{|x| x[/#{@@pi}/] ? Math::PI.to_s : x }
     	return expression
     end
     def self.shunting_yard(stack)
+        =begin
+            Takes stack of elements created by makeStackfromInput. This stack is a prefix-notation expression.
+            Using Shunting Yard Algorithm, input stack (prefix-notation) is converted to a postfix-notation expression.
+            Returns output_queue which is a stack of elements where elements could be Functions, operators, numbers. This stack is a postfix-notation expression.
+            Note that condition_operator(operator_stack.last, cell) calls a "useless" private method but it achieves a cleanear Algorithm code.
+        =end
         output_queue=[]
         operator_stack=[]
         stack.each{|cell|
@@ -54,6 +78,13 @@ class Calculator
         return output_queue
     end
     def self.polish_notation_algorithm(shunting_yard_stack)
+        =begin
+            Takes stack of elements created by shunting_yard. This stack is a postfix-notation expression.
+            Using Polish Reverse notation Algorithm, input shunting_yard_stack (postfix-notation) is evaluated and ends as the result.
+            Returns polish_stack which contains the final result. If everything worked fine, this polish_stack will be of length 1.
+            Note that when you evaluate an operator you need to pop two operands.
+            Note that when you evaluate a function you need to pop only one operand.
+        =end
         polish_stack=[]
         shunting_yard_stack.each{|cell|
             case cell
