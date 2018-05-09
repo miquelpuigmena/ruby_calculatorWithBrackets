@@ -142,7 +142,7 @@ class Calculator
             Takes operands and operator.
 
             Note that if operand is an accepted function will evaluate using Ruby's Math::function library.
-            Note that simple operations such as ['+', '-', '/', '*', '^'] can be evaluated using Float.send. 
+            Note that simple operations such as ['+', '-', '/', '*', '^'] can be evaluated using Float.send.
         """
         case operator
         when "log"
