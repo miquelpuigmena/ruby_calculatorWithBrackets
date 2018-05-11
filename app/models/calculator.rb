@@ -14,8 +14,8 @@ class Calculator
         Regex patterns used in several functions.
         Note that all of them are created as Class attributes. Usefull to share them with other classes.
     """
-    @@functions="log|ln|exp|e\^|sinh|cosh|tanh|sin|cos|tan"
-    @@operands="\+|\\-|\*|\^|\/"
+    @@functions="log|ln|exp|e\\^|sinh|cosh|tanh|sin|cos|tan"
+    @@operands="\\+|\\-|\\*|\\^|\\/"
     @@parenthesis="\(|\)"
     @@pi="pi|PI"
     @@numeric="\\d*[\.|\,]?\\d+"
@@ -28,7 +28,7 @@ class Calculator
             Return true if it is a function false otherwise.
         """
         def self.===(str)
-            str[/[#{@@functions}]/] != nil
+            str[/#{@@functions}/] != nil
         end
     end
     class Is_operator < Calculator
@@ -39,7 +39,7 @@ class Calculator
             Return true if it is an operand false otherwise.
         """
         def self.===(str)
-            str[/[#{@@operands}]/] != nil
+            str[/#{@@operands}/] != nil
         end
     end
     class Is_numeric < Calculator
@@ -64,7 +64,7 @@ class Calculator
             Note that .reject(&:empty?) drops any cell with empty string inside stack.
             Note that .map{|x| x[/#{@@pi}/] ? Math::PI.to_s : x } takes any accepted PI statement and replaces it by pi numeric value as a String.
         """
-        expression = input.gsub(",",".").split(/#{@@blank_spaces}|(#{@@numeric})|(#{@@pi})|([#{@@operands}])|([#{@@parenthesis}])|(#{@@functions})/).reject(&:empty?).map{|x| x[/#{@@pi}/] ? Math::PI.to_s : x }
+        expression = input.gsub(",",".").split(/#{@@blank_spaces}|(#{@@functions})|(#{@@numeric})|(#{@@pi})|([#{@@operands}])|([#{@@parenthesis}])/).reject(&:empty?).map{|x| x[/#{@@pi}/] ? Math::PI.to_s : x }
         if expression.first.eql?("-") then expression.unshift("0") end
         return expression
     end
@@ -107,12 +107,12 @@ class Calculator
         polish_stack=[]
         shunting_yard_stack.each{|cell|
             case cell
-                when Is_operator
-                    ops = polish_stack.pop(2)
-                    polish_stack.push(simple_operation_calculate(ops, cell))
                 when Is_function
                     op = polish_stack.pop
                     polish_stack.push(simple_operation_calculate(op, cell))
+                when Is_operator
+                    ops = polish_stack.pop(2)
+                    polish_stack.push(simple_operation_calculate(ops, cell))
                 when Is_numeric
                    polish_stack.push(cell)
             end
